@@ -60,9 +60,18 @@ public class SessionManager {
         resultSet = statement.executeQuery(
                 "select accountBalance from accountInformation WHERE username = '" + loginName +"' and accountType = '" + accountType +"';");
         resultSet.next();
-        double balanceInt = resultSet.getDouble(1);
+        double balanceInt = resultSet.getDouble("AccountBalance");
         balance = "$" + balanceInt;
         return balance; 
+    }
+    
+    public double getBalanceInterestCalculator(String loginName, String accountType) throws SQLException{
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(
+                "select accountBalance from accountInformation WHERE username = '" + loginName +"' and accountType = '" + accountType +"';");
+        resultSet.next();
+        return resultSet.getDouble("AccountBalance");
+         
     }
     
     public String getTransactionHistory(String loginName, String accountType) throws SQLException{
@@ -79,7 +88,7 @@ public class SessionManager {
         return history; 
     }
     
-    public ResultSet getTransactionHistoryForInterestCalculator(String loginName, String accountType) throws SQLException{
+    public ResultSet getTransactionHistoryForInterestCalculator(String loginName, String accountType) throws SQLException {
         
         statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(
@@ -93,9 +102,21 @@ public class SessionManager {
         Date date= new Date();
         String todayDate = date.getYear()+1900+"-"+Integer.toString(date.getMonth()+1)+"-"+date.getDate();
         double transferAmountDouble = Double.parseDouble(transferAmount);
+        double receivingBalance = 0;
+        double transferringBalance=0;
         statement = connection.createStatement();
-        statement.execute("UPDATE accountInformation SET accountBalance = '" + transferAmountDouble+"', lastUpdate = '" + todayDate +"' WHERE username = '"+ loginName+"' AND accountType = '"+ receivingAccountType+ "';");
-        statement.execute("UPDATE accountInformation SET accountBalance = '" + -transferAmountDouble+"', lastUpdate = '" + todayDate +"' WHERE username = '"+ loginName+"' AND accountType = '"+ transferringAccountType+ "';");
+        
+        resultSet = statement.executeQuery("select accountBalance from accountInformation WHERE username = '" + loginName +"' and accountType = '" + receivingAccountType +"';");
+        resultSet.next();
+        receivingBalance = resultSet.getDouble("accountBalance");
+        
+        resultSet = statement.executeQuery("select accountBalance from accountInformation WHERE username = '" + loginName +"' and accountType = '" + transferringAccountType +"';");
+        resultSet.next();
+        transferringBalance = resultSet.getDouble("accountBalance");
+        
+        double balanceInt = resultSet.getDouble("AccountBalance");
+        statement.execute("UPDATE accountInformation SET accountBalance = '" + (transferAmountDouble+receivingBalance) +"', lastUpdate = '" + todayDate +"' WHERE username = '"+ loginName+"' AND accountType = '"+ receivingAccountType+ "';");
+        statement.execute("UPDATE accountInformation SET accountBalance = '" + (transferringBalance-transferAmountDouble)+"', lastUpdate = '" + todayDate +"' WHERE username = '"+ loginName+"' AND accountType = '"+ transferringAccountType+ "';");
         statement.execute("INSERT INTO transactionHistory values ('"+loginName+"', '"+ receivingAccountType+"', "+ transferAmountDouble +", '"+todayDate+"');");
         statement.execute("INSERT INTO transactionHistory values ('"+loginName+"', '"+ transferringAccountType+"', "+ -transferAmountDouble +", '"+todayDate+"');");
         transferStatus = true;
