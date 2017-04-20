@@ -13,6 +13,7 @@ public class interestCalculator {
 	
 	List<Transaction> history = new ArrayList<Transaction>();
 	double balance = 0;
+        double rate;
 	
 	interestCalculator(String username, String accountType){
 
@@ -26,6 +27,14 @@ public class interestCalculator {
 		ResultSet rs = null;
 		String date = "";
 		Date generateDate = new Date();
+                
+                if (accountType.equals("checking")){
+                    rate = 0.04;
+                }
+                else if (accountType.equals("savings")){
+                    rate = 0.06;
+                }
+                
 		try {
 			balance = sm.getBalanceInterestCalculator(username, accountType);
 		} catch (SQLException e1) {
@@ -68,7 +77,6 @@ public class interestCalculator {
 		double interest;
 		double avgdlybal;
 		double sum = 0;   
-		//System.out.println(balance);
 		for (int i = 0; i < 30; i++){                       //starts with most recent transactions and loops down to 30 day old transactions
 
 			for (Transaction x: history){
@@ -77,27 +85,17 @@ public class interestCalculator {
 					
 						balance = balance + x.amount;
 						balance = Math.round(balance*100.0)/100.0;
-						System.out.println("Withdraw of " + x.amount + ":  " + balance);                        
-					
 				} 
 			}
 			sum = sum + balance;
 		}
 
 		avgdlybal = sum / 30;                           //total is then divided by 30 to get avg daily balance
-
-	//	System.out.println(avgdlybal);
-
-		interest = (avgdlybal * 0.01)/12;               //Will need to add savings/checking interest rates. Currently at 1% APY
+                
+		interest = (avgdlybal * rate)/12;               
 		interest = Math.round(interest*100.0)/100.0;    //rounds off the final amount
 
 
 		return interest;                                //returns result
 	}
-
-
-
-
-
-
 }
