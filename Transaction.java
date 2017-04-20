@@ -1,16 +1,18 @@
 
-//Transaction class may be included in final depending on how information is transferred from database
+//Transaction class for building the transaction history for interest Calculator
 // Lennon Brixey
 
 public class Transaction {
     
             
-    int age;
+    int age;  
     double amount;
     
-    Transaction(int age, double amount){
-    	this.age = age;
-    	this.amount = amount;
+    Transaction(int date, double amt){
+
+        this.age = date;
+        this.amount = amt;
     }
     
 }
+
