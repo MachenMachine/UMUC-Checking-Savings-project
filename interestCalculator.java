@@ -13,7 +13,7 @@ public class interestCalculator {
 	
 	List<Transaction> history = new ArrayList<Transaction>();
 	double balance = 0;
-        double rate;
+    double rate;
 	
 	interestCalculator(String username, String accountType){
 
@@ -31,7 +31,7 @@ public class interestCalculator {
                 if (accountType.equals("checking")){
                     rate = 0.04;
                 }
-                else if (accountType.equals("savings")){
+                else if (accountType.equals("saving")){
                     rate = 0.06;
                 }
                 
