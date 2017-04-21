@@ -13,7 +13,7 @@ public class interestCalculator {
 	
 	List<Transaction> history = new ArrayList<Transaction>();
 	double balance = 0;
-    double rate;
+        double rate;
 	
 	interestCalculator(String username, String accountType){
 
@@ -47,12 +47,28 @@ public class interestCalculator {
 			e.printStackTrace();
 		}
 		try {
+                    
+                        String zero;
+                        
+                        if (generateDate.getMonth() < 10){
+                            
+                            zero = Integer.toString(0);                            
+                            
+                        }
+                        else {zero = "";}
+                    
+                    
 			while(rs.next()){
 				 date = rs.getString("transactionDate");
 				 date = removeChars(date);
-				 todayDate = generateDate.getYear()+1900+""+Integer.toString(generateDate.getMonth()+1)+""+generateDate.getDate();
+				 todayDate = generateDate.getYear()+1900+""+zero+Integer.toString(generateDate.getMonth()+1)+""+generateDate.getDate();
 				 int transactionDateInt = Integer.parseInt(date);
+                                 
+                                 System.out.println(transactionDateInt);
+                                 
 				 int todayDateInt = Integer.parseInt(todayDate);
+                                 
+                                 System.out.println(todayDateInt);
 				 Transaction t = new Transaction(todayDateInt - transactionDateInt, rs.getDouble("balanceChange")); 
 				 history.add(t);
 			}
@@ -81,6 +97,7 @@ public class interestCalculator {
 
 			for (Transaction x: history){
 
+                        
 				if (x.age == i){                            //checks for transactions that happened on current "day"
 					
 						balance = balance + x.amount;
@@ -92,10 +109,12 @@ public class interestCalculator {
 
 		avgdlybal = sum / 30;                           //total is then divided by 30 to get avg daily balance
                 
+                System.out.println(avgdlybal);
+                
 		interest = (avgdlybal * rate)/12;               
 		interest = Math.round(interest*100.0)/100.0;    //rounds off the final amount
 
-
+               
 		return interest;                                //returns result
 	}
 }
