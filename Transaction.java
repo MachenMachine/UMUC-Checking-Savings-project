@@ -10,9 +10,9 @@ public class Transaction {
     
     Transaction(int date, double amt){
 
+   
         this.age = date;
         this.amount = amt;
     }
     
 }
-
