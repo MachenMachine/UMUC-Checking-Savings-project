@@ -44,7 +44,7 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
   private JRadioButton checkingRadio = new JRadioButton("Checking");
   private JRadioButton savingsRadio = new JRadioButton("Saving");
   private JRadioButton checkingRadio2 = new JRadioButton("Checking");
-  private JRadioButton savingsRadio2 = new JRadioButton("Savings");
+  private JRadioButton savingsRadio2 = new JRadioButton("Saving");
   private JLabel transferLabel = new JLabel ("Enter Transfer Amount. ", SwingConstants.CENTER);
   private JTextArea jTextArea = new JTextArea ();
   private JFormattedTextField transferField;
@@ -82,10 +82,10 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
     gbc.gridwidth = GridBagConstraints.REMAINDER;
     gbc.fill = GridBagConstraints.HORIZONTAL;
 
-    checkingRadio.setActionCommand("from Checking");
-    savingsRadio.setActionCommand("from Savings");
-    checkingRadio2.setActionCommand("to Checking");
-    savingsRadio2.setActionCommand("to Savings");
+    checkingRadio.setActionCommand("checking");
+    savingsRadio.setActionCommand("saving");
+    checkingRadio2.setActionCommand("checking");
+    savingsRadio2.setActionCommand("saving");
     
     ButtonGroup fromGroup = new ButtonGroup();
     fromGroup.add(checkingRadio);
@@ -121,6 +121,7 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
 					jTextArea.setText("");
 					jTextArea.append("Transfering $" + amount + " " + fromGroup.getSelection().getActionCommand() + " " + toGroup.getSelection().getActionCommand());
 					try {
+						System.out.println( fromGroup.getSelection().getActionCommand());
 						mySession.transferMoney(loginName, fromGroup.getSelection().getActionCommand(), toGroup.getSelection().getActionCommand(), stringAmount);
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
