@@ -141,27 +141,12 @@ public class loginGUI extends JFrame {
     });//end transferButton actionListener
   } // end constructor
   
-  private static boolean isPasswordCorrect(char[] input) {
-      boolean isCorrect = true;
-      char[] correctPassword = { 'k', 'm', 'a', 'c', 'h', 'e', 'n', 'p', 'w' };
-      char[] correctPassword2 = { 'c', 'm', 'a', 'g', 'i', 'n', 'n', 'i', 's', 'p', 'w' };
-      char[] correctPassword3 = { 'k', 'm', 'a', 'c', 'h', 'e', 'n', 'p', 'w' };
-      char[] correctPassword4 = { 'k', 'm', 'a', 'c', 'h', 'e', 'n', 'p', 'w' };
+  private boolean isPasswordCorrect(char[] input) {
       
-//. I'll make usernames for us all that are first name initial, last name, 
-      //and then the password just has an additional "pw" at the end. So I 
-      //am in there as 'cmaginnis', 'cmaginnispw'.
-      if (input.length != correctPassword.length || input.length != correctPassword2.length || input.length != correctPassword3.length || input.length != correctPassword4.length) {
-          isCorrect = false;
-      } else {
-    	  if(Arrays.equals (input, correctPassword ) || Arrays.equals (input, correctPassword2) || Arrays.equals (input, correctPassword3) || Arrays.equals (input, correctPassword4))
-          isCorrect = true;
-      }
+      SessionManager sm = new SessionManager();
+      
 
-      //Zero out the password.
-      Arrays.fill(correctPassword2,'0');
-
-      return isCorrect;
+      return sm.verifyLogin(loginName, loginPassword);
   }
   
 //Must be called from the event dispatch thread.

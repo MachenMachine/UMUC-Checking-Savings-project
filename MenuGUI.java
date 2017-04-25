@@ -83,11 +83,12 @@ public class MenuGUI extends JFrame{
     
     //apply ActionListeners to the buttons
    SessionManager mySession = new SessionManager();
-   interestCalculator myInterest = new interestCalculator();
-   String cBalance = mySession.getBalance(loginName, "checking").replace("$", "");
-   String sBalance = mySession.getBalance(loginName, "saving").replace("$", "");
-   double checkingBalance = Double.parseDouble(cBalance);
-   double savingsBalance = Double.parseDouble(sBalance);
+  interestCalculator myInterestChecking = new interestCalculator(loginName, "checking");
+  interestCalculator myInterestSaving = new interestCalculator(loginName, "saving");
+//   String cBalance = mySession.getBalance(loginName, "checking").replace("$", "");
+//   String sBalance = mySession.getBalance(loginName, "saving").replace("$", "");
+//   double checkingBalance = Double.parseDouble(cBalance);
+//   double savingsBalance = Double.parseDouble(sBalance);
     balanceButton.addActionListener(e-> {jTextArea.setText("");
     		
     	try {
@@ -109,7 +110,7 @@ public class MenuGUI extends JFrame{
     });//end transferButton actionListener
     checkingAccountHistoryButton.addActionListener(e-> { jTextArea.setText("");
     	try {
-			jTextArea.append("Checking History: " + mySession.getTransactionHistory(loginName, "checking"));
+			jTextArea.append("Checking History: \n" + mySession.getTransactionHistory(loginName, "checking"));
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -118,7 +119,7 @@ public class MenuGUI extends JFrame{
     });//end checkingAccountHistoryButton actionListener
     savingsAccountHistoryButton.addActionListener(e-> {jTextArea.setText("");
     try {
-		jTextArea.append("Savings History: " + mySession.getTransactionHistory(loginName, "saving"));
+		jTextArea.append("Savings History: \n" + mySession.getTransactionHistory(loginName, "saving"));
 	} catch (Exception e1) {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
@@ -126,8 +127,9 @@ public class MenuGUI extends JFrame{
     });//end savingsAccountHistoryButton listener
     	
     interestButton.addActionListener(e-> {jTextArea.setText("");//end displyButton listener 
-    	jTextArea.append("Interest Earnings Checking: " + myInterest.calculateInterest(history, checkingBalance));
-    	jTextArea.append("\nInterest Earnings Checking: " + myInterest.calculateInterest(history, savingsBalance));
+
+    	jTextArea.append("Interest Earnings Checking: " + myInterestChecking.calculateInterest());
+    	jTextArea.append("\nInterest Earnings Checking: " + myInterestSaving.calculateInterest());
     });//end interestButton listener
    
   } // end constructor

@@ -42,7 +42,7 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
   private JLabel fromAccount = new JLabel("Transfer From:");
   private JLabel toAccount = new JLabel("Transfer To:");
   private JRadioButton checkingRadio = new JRadioButton("Checking");
-  private JRadioButton savingsRadio = new JRadioButton("Savings");
+  private JRadioButton savingsRadio = new JRadioButton("Saving");
   private JRadioButton checkingRadio2 = new JRadioButton("Checking");
   private JRadioButton savingsRadio2 = new JRadioButton("Savings");
   private JLabel transferLabel = new JLabel ("Enter Transfer Amount. ", SwingConstants.CENTER);
