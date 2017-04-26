@@ -1,6 +1,6 @@
 
 /* 
- * Date: 23 April 2017
+ * Date: 30 April 2017
  * Author: Ken Machen
  * CMSC-495 Checking and Savings Program
  * 
@@ -10,14 +10,13 @@
  * 1			18 April 2017	Initial coding				   	Ken
  * 2			20 April 2017	Added Functionality to buttons	Ken
  * 3			21 April 2017	Chanked layout					Ken
- * 4
+ * 4			25 April 2017	Changed connection to interest	Conor
+ * 5			26 April 2017   Code clead up					Ken
 */
 
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
@@ -27,12 +26,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
 
 public class MenuGUI extends JFrame{
-	
-	
   static final long serialVersionUID = 25;
   private JButton balanceButton = new JButton ("BALANCES");
   private JButton transferButton = new JButton ("Transfer");
@@ -40,11 +35,7 @@ public class MenuGUI extends JFrame{
   private JButton savingsAccountHistoryButton = new JButton ("SAVINGS ACCOUNT HISTORY");
   private JButton interestButton = new JButton("INTEREST EARNINGS");
   private JTextArea jTextArea = new JTextArea ();
-  private List history = new LinkedList<>();
-  //private JTextField transferField = new JTextField(20);
- // private JLabel emptyLabel = new JLabel("Space");
   
- 
   //Constructor with GUI & title input
   public MenuGUI (String title, String loginName, String loginPassword) throws NumberFormatException, SQLException {
     setTitle (title + "'s Accounts");
@@ -61,34 +52,26 @@ public class MenuGUI extends JFrame{
 	JPanel inputOutputPanel = new JPanel();
 	inputOutputPanel.setLayout(new GridLayout(6,0,0,5));
     
-   // buttons on the top
+    // buttons on the top
     JPanel panel = new JPanel (); // FlowLayout
-    //panel.setLayout(new GridLayout(7,2));
     panel.setLayout(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridwidth = GridBagConstraints.REMAINDER;
     gbc.fill = GridBagConstraints.HORIZONTAL;
 
     //add components to the panel
-   
     panel.add(balanceButton, gbc);
     panel.add (transferButton, gbc);
-    //panel.add(transferField, gbc);
-   	panel.add (checkingAccountHistoryButton, gbc);
+    panel.add (checkingAccountHistoryButton, gbc);
     panel.add (savingsAccountHistoryButton, gbc);
     panel.add (interestButton, gbc);
     add (panel, BorderLayout.NORTH);
-    
     validate();//ensure all buttons are visible
     
+    SessionManager mySession = new SessionManager();
+    interestCalculator myInterestChecking = new interestCalculator(loginName, "checking");
+    interestCalculator myInterestSaving = new interestCalculator(loginName, "saving");
     //apply ActionListeners to the buttons
-   SessionManager mySession = new SessionManager();
-  interestCalculator myInterestChecking = new interestCalculator(loginName, "checking");
-  interestCalculator myInterestSaving = new interestCalculator(loginName, "saving");
-//   String cBalance = mySession.getBalance(loginName, "checking").replace("$", "");
-//   String sBalance = mySession.getBalance(loginName, "saving").replace("$", "");
-//   double checkingBalance = Double.parseDouble(cBalance);
-//   double savingsBalance = Double.parseDouble(sBalance);
     balanceButton.addActionListener(e-> {jTextArea.setText("");
     		
     	try {
@@ -106,7 +89,12 @@ public class MenuGUI extends JFrame{
     });
     transferButton.addActionListener (e-> {jTextArea.setText("");
     	jTextArea.append("transfer Button Pressed");
-    	new TransferGUI("FUNDS TRANSFER", loginName);
+    	try {
+			new TransferGUI("FUNDS TRANSFER", loginName);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
     });//end transferButton actionListener
     checkingAccountHistoryButton.addActionListener(e-> { jTextArea.setText("");
     	try {
@@ -127,11 +115,10 @@ public class MenuGUI extends JFrame{
     });//end savingsAccountHistoryButton listener
     	
     interestButton.addActionListener(e-> {jTextArea.setText("");//end displyButton listener 
-
     	jTextArea.append("Interest Earnings Checking: " + myInterestChecking.calculateInterest());
-    	jTextArea.append("\nInterest Earnings Checking: " + myInterestSaving.calculateInterest());
+    	jTextArea.append("\nInterest Earnings Savings: " + myInterestSaving.calculateInterest());
     });//end interestButton listener
    
   } // end constructor
   
-}//end Class SeaPortProgram 
+}//end Class MenuGUI

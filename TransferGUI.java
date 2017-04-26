@@ -79,8 +79,7 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
 	JPanel inputOutputPanel = new JPanel();
 	inputOutputPanel.setLayout(new GridLayout(6,0,0,5));
     
-	// buttons on the top
-    JPanel panel = new JPanel (); // FlowLayout
+	JPanel panel = new JPanel (); // FlowLayout
     panel.setLayout(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -109,8 +108,7 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
     panel.add(transferLabel, gbc);
     panel.add(transferField, gbc);
     panel.add(transferButton, gbc);
-    //panel.add(transferField, gbc);
-   	add (panel, BorderLayout.NORTH);
+    add (panel, BorderLayout.NORTH);
     
     validate();//ensure all buttons are visible
     
