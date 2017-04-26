@@ -45,16 +45,41 @@ public class SessionManager {
     
     public Boolean verifyLogin(String loginName, String loginPassword) {
         try {
+        	String hashedPassword = hashPassword(loginPassword);
             statement = connection.createStatement();
             resultSet = statement.executeQuery(
-                "select username from loginInformation WHERE username = '" + loginName +"' and password = '" + loginPassword +"';");
+                "select username from loginInformation WHERE username = '" + loginName +"' and password = '" + hashedPassword +"';");
+            if(resultSet.next()){
             return true;
+            }
         } catch (SQLException ex1){
             return false;
         }
+		return false;
     }
     
-    public String getBalance(String loginName, String accountType) throws SQLException{
+     String hashPassword(String loginPassword) {
+		double salt1 = 87421;  //random large prime number I found
+		double salt2 = 103687;
+		double salt3 = 179424673;
+		
+		char[] arr = new char[18];
+		for(int counter =0; counter < loginPassword.length(); counter++){
+			arr[counter] = loginPassword.charAt(counter); 
+		}
+		
+		double loginPw =0;
+		
+		for(int counter = 0; counter < arr.length; counter++){
+			loginPw+= arr[counter];
+		}
+		
+		loginPw = (loginPw*salt3*salt1)/salt2; 
+		
+		return String.valueOf(loginPw);
+	}
+
+	public String getBalance(String loginName, String accountType) throws SQLException{
         String balance;
         statement = connection.createStatement();
         resultSet = statement.executeQuery(

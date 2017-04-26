@@ -1,6 +1,6 @@
 
 /* 
- * Date: 23 April 2017
+ * Date: 30 April 2017
  * Author: Ken Machen
  * CMSC-495 Checking and Savings Program
  * 
@@ -11,7 +11,9 @@
  * 2			19 April 2917	Fixed radio buttons/groups			Ken
  * 2			20 April 2017	Fixed layout/ added Error catching	Ken
  * 3			21 April 2017	changed what to do on exit			Ken
- * 4	
+ * 4			25 April 2017	Fixed SQL 							Conor
+ * 5			26 April 2017	Added check for available funds 	Ken
+ * 	
 */
  
 
@@ -33,6 +35,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 
 public class TransferGUI extends JFrame implements PropertyChangeListener{
@@ -42,20 +45,20 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
   private JLabel fromAccount = new JLabel("Transfer From:");
   private JLabel toAccount = new JLabel("Transfer To:");
   private JRadioButton checkingRadio = new JRadioButton("Checking");
-  private JRadioButton savingsRadio = new JRadioButton("Savings");
+  private JRadioButton savingsRadio = new JRadioButton("Saving");
   private JRadioButton checkingRadio2 = new JRadioButton("Checking");
-  private JRadioButton savingsRadio2 = new JRadioButton("Savings");
+  private JRadioButton savingsRadio2 = new JRadioButton("Saving");
   private JLabel transferLabel = new JLabel ("Enter Transfer Amount. ", SwingConstants.CENTER);
   private JTextArea jTextArea = new JTextArea ();
   private JFormattedTextField transferField;
   private NumberFormat amountFormat; 
   private double amount = 0.00;
+  SessionManager mySession = new SessionManager();
   
  
   //Constructor with GUI & title input
-  public TransferGUI (String title, String loginName) {
+  public TransferGUI (String title, String loginName) throws SQLException {
     setTitle (title );
-   // setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setLocationRelativeTo(null);
     setSize (600, 400);
@@ -67,6 +70,7 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
     transferField.setValue(new Double(amount));
     transferField.setColumns(20);
     transferField.addPropertyChangeListener("value", this);
+    
     // put scroll bars around the text area
     JScrollPane scrollPane = new JScrollPane (jTextArea);
     add (scrollPane, BorderLayout.CENTER); 
@@ -75,17 +79,16 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
 	JPanel inputOutputPanel = new JPanel();
 	inputOutputPanel.setLayout(new GridLayout(6,0,0,5));
     
-	// buttons on the top
-    JPanel panel = new JPanel (); // FlowLayout
+	JPanel panel = new JPanel (); // FlowLayout
     panel.setLayout(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridwidth = GridBagConstraints.REMAINDER;
     gbc.fill = GridBagConstraints.HORIZONTAL;
 
-    checkingRadio.setActionCommand("from Checking");
-    savingsRadio.setActionCommand("from Savings");
-    checkingRadio2.setActionCommand("to Checking");
-    savingsRadio2.setActionCommand("to Savings");
+    checkingRadio.setActionCommand("checking");
+    savingsRadio.setActionCommand("saving");
+    checkingRadio2.setActionCommand("checking");
+    savingsRadio2.setActionCommand("saving");
     
     ButtonGroup fromGroup = new ButtonGroup();
     fromGroup.add(checkingRadio);
@@ -105,17 +108,18 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
     panel.add(transferLabel, gbc);
     panel.add(transferField, gbc);
     panel.add(transferButton, gbc);
-    //panel.add(transferField, gbc);
-   	add (panel, BorderLayout.NORTH);
+    add (panel, BorderLayout.NORTH);
     
     validate();//ensure all buttons are visible
     
-    SessionManager mySession = new SessionManager();
     //apply ActionListeners to the buttons
     transferButton.addActionListener (e-> {jTextArea.setText("");
     	String stringAmount = String.valueOf(amount);
-    	if((checkingRadio.isSelected() || savingsRadio.isSelected()) && (checkingRadio2.isSelected() || savingsRadio2.isSelected()) ){
-    		if((amount > 0) ){
+    	if((checkingRadio.isSelected() && checkingRadio2.isSelected()) || (savingsRadio.isSelected() && savingsRadio2.isSelected())){
+    		JOptionPane.showMessageDialog(null, "Please Select Different To and From Accounts.");
+    	}
+    	else if((checkingRadio.isSelected() || savingsRadio.isSelected()) && (checkingRadio2.isSelected() || savingsRadio2.isSelected()) ){
+    		if((amount > 0 ) && verifyFromBalance(loginName)){
 		    	int dialogButton =JOptionPane.showConfirmDialog(null, "Are you sure you want to transfer $" + amount + "?", "CONFIRM TRANSACTION", JOptionPane.YES_NO_OPTION);
 				if(dialogButton == JOptionPane.YES_OPTION){
 					jTextArea.setText("");
@@ -151,13 +155,39 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
     });//end transferButton actionListener
     transferField.addActionListener(e-> {
     	//transferField.setFormatterFactory();
-    	    
     });
-    
-    
-    
   } // end constructor
-
+  
+  	//method to check available funds to transfer
+  	public boolean verifyFromBalance(String loginName) {
+  		String cBalance;
+		try {
+			cBalance = mySession.getBalance(loginName, "checking").replace("$", "");
+			 double checkingBalance = Double.parseDouble(cBalance);
+			 if(checkingRadio.isSelected()  &&  savingsRadio2.isSelected() ){
+		    		if((amount > 0 && amount <= checkingBalance ) ){
+		    			return true;
+		    		}
+		    	}
+		}catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+  	    String sBalance;
+		try {
+			sBalance = mySession.getBalance(loginName, "saving").replace("$", "");
+			double savingsBalance = Double.parseDouble(sBalance);
+	  	    if(savingsRadio.isSelected()  &&  checkingRadio2.isSelected() ){
+	    		if((amount > 0 && amount <= savingsBalance ) ){
+	    			return true;
+	    		}
+	  		}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+  	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent e) {
@@ -166,7 +196,9 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
 	        amount = ((Number)transferField.getValue()).doubleValue();
 	    } 
 	}
-	
-
-  
-}//end Class SeaPortProgram 
+}//end Class TransferGUI 
+  	
+  	
+  	
+  	
+  	
