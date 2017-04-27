@@ -159,5 +159,15 @@ public class SessionManager {
         if (accountType == "savings") interest = "$" + (balanceInt*0.0006);
         return interest; 
     }
+    
+    public void updateBalance(String loginName, String accountType, double amountToAdd) throws SQLException{
+    	 Date date= new Date();
+         String todayDate = date.getYear()+1900+"-"+Integer.toString(date.getMonth()+1)+"-"+date.getDate();
+         
+    	statement = connection.createStatement();
+        statement.execute(
+                "Update accountInformation SET accountBalance = " + (amountToAdd+this.getBalanceInterestCalculator(loginName, accountType)) + ", lastUpdate = '" + todayDate + "' Where username =  '" + loginName + "' and accountType = '" + accountType + "';" );
+        statement.execute("Insert into transactionHistory values('" +loginName + "', '"+accountType+"', "+amountToAdd+", '"+todayDate +"');");
+    }
 
 }// End of class SessionManager
