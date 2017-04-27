@@ -25,16 +25,21 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
@@ -59,16 +64,13 @@ public class LoginGUI extends JFrame {
   //Constructor with GUI & title input
   public LoginGUI (JFrame frame, String title) {
     controllingFrame = frame;
-    BufferedImage image = null;
+
 	setTitle (title);
-	try {
-	   image = ImageIO.read(new File("pigIcon.png"));
-			  frame.setIconImage(image);
-	}
-	catch (IOException exc) {
-	    exc.printStackTrace();
-	}
-    setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+	Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("pigIcon.png"));
+	ImageIcon icon = new ImageIcon(image);
+	setIconImage(icon.getImage());
+    
+	setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
     setLocationRelativeTo(null);
     setSize (500, 350);
     setVisible (true);
@@ -173,10 +175,7 @@ public class LoginGUI extends JFrame {
 		}
     });//end cancelButton actionListener
   } // end constructor
-  public static void main (String args []) throws IOException {
-	  new LoginGUI (controllingFrame, "CHECKING AND SAVINGS ACCOUNTS");//constructor for GUI
-			    
-  } // end main	
+
   //method to verify login information
   private boolean isPasswordCorrect(char[] input) {
       SessionManager sm = new SessionManager();//call method in SessionManager class
