@@ -1,18 +1,19 @@
 
 /* 
  * Date: 30 April 2017
- * Author: Ken Machen
+ * Author: Ken Mahcne (Group 3)
  * CMSC-495 Checking and Savings Program
  * 
  * 						Revision History
  * 
- * REVISION #	DATE			DESCRIPTION							NAME
- * 1			18 April 2017	Initial coding				   		Ken
- * 2			19 April 2917	Fixed radio buttons/groups			Ken
- * 2			20 April 2017	Fixed layout/ added Error catching	Ken
- * 3			21 April 2017	changed what to do on exit			Ken
- * 4			25 April 2017	Fixed SQL 							Conor
- * 5			26 April 2017	Added check for available funds 	Ken
+ * REVISION #	DATE			DESCRIPTION								NAME
+ * 1			18 April 2017	Initial coding				   			Ken
+ * 2			19 April 2917	Fixed radio buttons/groups				Ken
+ * 2			20 April 2017	Fixed layout/ added Error catching		Ken
+ * 3			21 April 2017	changed what to do on exit				Ken
+ * 4			25 April 2017	Fixed SQL 								Conor
+ * 5			26 April 2017	Added check for available funds 		Ken
+ * 6			28 April 2017	Fixed error for insufficient funds		Ken
  * 	
 */
  
@@ -25,6 +26,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JScrollPane;
@@ -33,6 +35,9 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
@@ -59,9 +64,12 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
   //Constructor with GUI & title input
   public TransferGUI (String title, String loginName) throws SQLException {
     setTitle (title );
+    Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("piggy.png"));
+	ImageIcon icon = new ImageIcon(image);
+	setIconImage(icon.getImage());
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setLocationRelativeTo(null);
-    setSize (600, 400);
+    setSize (400, 400);
     setVisible (true);
 
     //set format of textField
@@ -119,34 +127,38 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
     		JOptionPane.showMessageDialog(null, "Please Select Different To and From Accounts.");
     	}
     	else if((checkingRadio.isSelected() || savingsRadio.isSelected()) && (checkingRadio2.isSelected() || savingsRadio2.isSelected()) ){
-    		if((amount > 0 ) && verifyFromBalance(loginName)){
-		    	int dialogButton =JOptionPane.showConfirmDialog(null, "Are you sure you want to transfer $" + amount + "?", "CONFIRM TRANSACTION", JOptionPane.YES_NO_OPTION);
-				if(dialogButton == JOptionPane.YES_OPTION){
-					jTextArea.setText("");
-					jTextArea.append("Transfering $" + amount + " " + fromGroup.getSelection().getActionCommand() + " " + toGroup.getSelection().getActionCommand());
-					try {
-						mySession.transferMoney(loginName, fromGroup.getSelection().getActionCommand(), toGroup.getSelection().getActionCommand(), stringAmount);
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+    		if(amount > 0 ) {
+    			if(verifyFromBalance(loginName)){
+    				int dialogButton =JOptionPane.showConfirmDialog(null, "Are you sure you want to transfer $" + amount + "?", "CONFIRM TRANSACTION", JOptionPane.YES_NO_OPTION);
+					if(dialogButton == JOptionPane.YES_OPTION){
+						jTextArea.setText("");
+						jTextArea.append("Transfering $" + amount + " " + fromGroup.getSelection().getActionCommand() + " " + toGroup.getSelection().getActionCommand());
+						try {
+							mySession.transferMoney(loginName, fromGroup.getSelection().getActionCommand(), toGroup.getSelection().getActionCommand(), stringAmount);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						jTextArea.append("\n\n$" + amount + " Transferred Successfully!");
+						try {
+							jTextArea.append("\n\nNew Checking Balance: " + mySession.getBalance(loginName, "checking"));
+							jTextArea.append("\nNew Savings Balance: " + mySession.getBalance(loginName, "saving"));
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
-					jTextArea.append("\n\n$" + amount + " Transferred Successfully!");
-					try {
-						jTextArea.append("\n\nNew Checking Balance: " + mySession.getBalance(loginName, "checking"));
-						jTextArea.append("\nNew Savings Balance: " + mySession.getBalance(loginName, "saving"));
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					if(dialogButton == JOptionPane.NO_OPTION){
+						jTextArea.setText("");
+						jTextArea.append("Transaction Cancelled!");
+						return;
 					}
-				}
-				if(dialogButton == JOptionPane.NO_OPTION){
-					jTextArea.setText("");
-					jTextArea.append("Transaction Cancelled!");
-					return;
-				}
-	    	}else{
-	    		JOptionPane.showMessageDialog(null, "Please Enter a Positive number.");
-	    	}
+		    	}else{
+		    		JOptionPane.showMessageDialog(null, "Amount requested excedes Account Balance.\nPlease try again");
+	    		}
+    		}else{
+    			JOptionPane.showMessageDialog(null, "Please Enter a Positive number.");
+    		}
     	}else {
     		JOptionPane.showMessageDialog(null, "Please Select To and From Accounts.");
     	}
@@ -195,6 +207,15 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
 	    if (source == transferField) {
 	        amount = ((Number)transferField.getValue()).doubleValue();
 	    } 
+	}
+	
+	public void close(){
+		System.gc();
+		java.awt.Window win[] = java.awt.Window.getWindows(); 
+		for(int i=0;i<win.length;i++){ 
+		    win[i].dispose(); 
+		    win[i]=null;
+		} 
 	}
 }//end Class TransferGUI 
   	
