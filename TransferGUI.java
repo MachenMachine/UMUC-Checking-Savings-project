@@ -68,7 +68,7 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
 	setIconImage(icon.getImage());
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setLocationRelativeTo(null);
-    setSize (600, 400);
+    setSize (400, 400);
     setVisible (true);
 
     //set format of textField
@@ -206,6 +206,15 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
 	    if (source == transferField) {
 	        amount = ((Number)transferField.getValue()).doubleValue();
 	    } 
+	}
+	
+	public void close(){
+		System.gc();
+		java.awt.Window win[] = java.awt.Window.getWindows(); 
+		for(int i=0;i<win.length;i++){ 
+		    win[i].dispose(); 
+		    win[i]=null;
+		} 
 	}
 }//end Class TransferGUI 
   	

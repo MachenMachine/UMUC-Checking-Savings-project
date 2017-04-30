@@ -1,6 +1,6 @@
 /* 
  * Date: 30 April 2017
- * Author: Ken Mahcne (Group 3)
+ * Author: Ken Machen (Group 3)
  * CMSC-495 Checking and Savings Program
  * 
  * 						Revision History
@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
@@ -28,6 +29,8 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.sql.SQLException;
 
 public class MainGUI extends JFrame{
@@ -43,9 +46,12 @@ public class MainGUI extends JFrame{
   //Constructor with GUI & title input
   public MainGUI (String title, String loginName, String loginPassword) throws NumberFormatException, SQLException {
     setTitle (title + "'s Accounts");
+    Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("piggy.png"));
+   	ImageIcon icon = new ImageIcon(image);
+   	setIconImage(icon.getImage());
     setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
     setLocationRelativeTo(null);
-    setSize (600, 400);
+    setSize (400, 400);
     setVisible (true);
 
     // put scroll bars around the text area
@@ -75,6 +81,7 @@ public class MainGUI extends JFrame{
     
     SessionManager mySession = new SessionManager();
     InterestCalculator myInterest = new InterestCalculator(loginName);
+
     //apply ActionListeners to the buttons
     balanceButton.addActionListener(e-> {jTextArea.setText("");
     		
@@ -122,12 +129,25 @@ public class MainGUI extends JFrame{
     	jTextArea.append(myInterest.toString());
     	
     });//end interestButton listener
-    logoutButton.addActionListener(e-> {jTextArea.setText("");//end displyButton listener 
+
+    logoutButton.addActionListener(e-> {jTextArea.setText("");//end displyButton listener+
+    
 	    int dialogButton =JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?",null, JOptionPane.YES_NO_OPTION);
 		if(dialogButton == JOptionPane.YES_OPTION){
-			this.setVisible(false);
-	    	JFrame frame = new JFrame();
-	    	new LoginGUI(frame, "Banking App");
+			try {
+				TransferGUI myTransfer = new TransferGUI("FUNDS TRANSFER", loginName);
+				myTransfer.close();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			int logButton =JOptionPane.showConfirmDialog(null, "You are now logged out. \nWould you like to log in?",null, JOptionPane.YES_NO_OPTION);
+				if(logButton == JOptionPane.YES_OPTION){
+					JFrame frame = new JFrame();
+			    	new LoginGUI(frame, "Banking App");
+				}else{
+					System.exit(0);
+				}
 		}
 		if(dialogButton == JOptionPane.NO_OPTION){
 			return;
@@ -135,6 +155,5 @@ public class MainGUI extends JFrame{
     });//end logoutButton listener
    
   } // end constructor
- 
 
 }//end Class MenuGUI
