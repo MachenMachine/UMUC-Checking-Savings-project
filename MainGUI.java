@@ -1,6 +1,6 @@
 /* 
  * Date: 30 April 2017
- * Author: Ken Mahcne (Group 3)
+ * Author: Ken Machen (Group 3)
  * CMSC-495 Checking and Savings Program
  * 
  * 						Revision History
@@ -81,7 +81,7 @@ public class MainGUI extends JFrame{
     
     SessionManager mySession = new SessionManager();
     InterestCalculator myInterest = new InterestCalculator(loginName);
-    
+
     //apply ActionListeners to the buttons
     balanceButton.addActionListener(e-> {jTextArea.setText("");
     		
@@ -129,6 +129,7 @@ public class MainGUI extends JFrame{
     	jTextArea.append(myInterest.toString());
     	
     });//end interestButton listener
+
     logoutButton.addActionListener(e-> {jTextArea.setText("");//end displyButton listener+
     
 	    int dialogButton =JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?",null, JOptionPane.YES_NO_OPTION);
@@ -147,9 +148,6 @@ public class MainGUI extends JFrame{
 				}else{
 					System.exit(0);
 				}
-			
-			
-			
 		}
 		if(dialogButton == JOptionPane.NO_OPTION){
 			return;
@@ -157,6 +155,5 @@ public class MainGUI extends JFrame{
     });//end logoutButton listener
    
   } // end constructor
- 
 
 }//end Class MenuGUI

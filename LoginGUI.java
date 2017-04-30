@@ -33,6 +33,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.sql.SQLException;
 import java.awt.Dimension;
 import java.util.Arrays;
 
