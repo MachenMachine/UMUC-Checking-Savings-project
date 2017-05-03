@@ -1,10 +1,11 @@
 
 /* 
+
  * Date: 		5 May 2017
  * Authors: 	Matthew Nielsen, Conor Maginnis, Lennon Brixey, Ken Machen
  * CMSC-495 	Checking and Savings Program
  * Purpose:   	interface to prompt user input of name and password to access 
- * 				accounts through the session manager
+ * 				      accounts through the session manager
  * 
  * 					Revision History
  * 

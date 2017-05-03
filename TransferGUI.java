@@ -4,7 +4,6 @@
  * Authors:    	Matthew Nielsen, Conor Maginnis, Lennon Brixey, Ken Machen
  * CMSC-495 	Checking and Savings Program
  * Purpose:    	To provide the ability to transfer money between accounts.	
- * 
  * 						Revision History
  * 
  * REVISION #	DATE			DESCRIPTION								NAME

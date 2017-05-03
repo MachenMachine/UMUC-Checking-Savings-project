@@ -170,8 +170,10 @@ public class SessionManager {
     
     public void updateBalance(String loginName, String accountType, double amountToAdd) throws SQLException{
     	 Date date= new Date();
+
          @SuppressWarnings("deprecation")
 		String todayDate = date.getYear()+1900+"-"+Integer.toString(date.getMonth()+1)+"-"+date.getDate();
+
          
     	statement = connection.createStatement();
         statement.execute(

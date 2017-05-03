@@ -62,9 +62,9 @@ public class MainGUI extends JFrame{
     JScrollPane scrollPane = new JScrollPane (jTextArea);
     add (scrollPane, BorderLayout.CENTER); 
     jTextArea.setCaretPosition(jTextArea.getDocument().getLength());
-	setBackground(Color.lightGray);
-	JPanel inputOutputPanel = new JPanel();
-	inputOutputPanel.setLayout(new GridLayout(6,0,0,5));
+	  setBackground(Color.lightGray);
+	  JPanel inputOutputPanel = new JPanel();
+	  inputOutputPanel.setLayout(new GridLayout(6,0,0,5));
     
     // buttons on the top
     JPanel panel = new JPanel (); // FlowLayout
@@ -85,9 +85,9 @@ public class MainGUI extends JFrame{
     
     SessionManager mySession = new SessionManager();
     InterestCalculator myInterest = new InterestCalculator(loginName);
-    
-    //apply ActionListeners to the buttons
+     //apply ActionListeners to the buttons
     balanceButton.addActionListener(e-> {jTextArea.setText("");
+
     	try {
 			jTextArea.append("Checking Balance: " + mySession.getBalance(loginName, "checking"));
 		} catch (Exception e1) {
@@ -100,7 +100,9 @@ public class MainGUI extends JFrame{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+
     });//end balanceButton action listener
+
     transferButton.addActionListener (e-> {jTextArea.setText("");
     	jTextArea.append("transfer Button Pressed");
     	try {
@@ -132,6 +134,7 @@ public class MainGUI extends JFrame{
     	jTextArea.append(myInterest.toString());
     	
     });//end interestButton listener
+    
     logoutButton.addActionListener(e-> {jTextArea.setText("");//end displyButton listener+
     
 	    int dialogButton =JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?",null, JOptionPane.YES_NO_OPTION);
@@ -150,6 +153,7 @@ public class MainGUI extends JFrame{
 				}else{
 					System.exit(0);
 				}
+
 		}
 		if(dialogButton == JOptionPane.NO_OPTION){
 			return;
@@ -157,4 +161,6 @@ public class MainGUI extends JFrame{
     });//end logoutButton listener
    
   } // end constructor
+
 }//end Class MainGUI
+
