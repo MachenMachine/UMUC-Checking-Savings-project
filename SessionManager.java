@@ -1,8 +1,16 @@
 /*  File:       SessionManager.java
- *  Authors:    Matthew Nielsen, Conor Maginnis
+ *  Authors:    Matthew Nielsen, Conor Maginnis, Lennon Brixey, Ken Machen
  *  Date:       4-18-2017
  *  Purpose:    To provide the connection to the sql database and facilitate the
  *              interface between it and the application.
+ *              
+ *              Revision History
+ * 
+ * REVISION #	DATE			DESCRIPTION										NAME
+ * 1			17 April 2017	Initial coding				   					Matthew
+ * 2			19 April 2017	Methods to connect to database and get balance 	Conor/Matthew
+ * 3			3 May 2017		Added suppression warnings for deprication		Ken
+ * 
  */
 
 
@@ -122,7 +130,8 @@ public class SessionManager {
         return resultSet;
     }
     
-    public Boolean transferMoney(String loginName, String transferringAccountType, String receivingAccountType, String transferAmount) throws SQLException{
+    @SuppressWarnings("deprecation")
+	public Boolean transferMoney(String loginName, String transferringAccountType, String receivingAccountType, String transferAmount) throws SQLException{
         Boolean transferStatus;
         Date date= new Date();
         String todayDate = date.getYear()+1900+"-"+Integer.toString(date.getMonth()+1)+"-"+date.getDate();
@@ -139,7 +148,6 @@ public class SessionManager {
         resultSet.next();
         transferringBalance = resultSet.getDouble("accountBalance");
         
-        double balanceInt = resultSet.getDouble("AccountBalance");
         statement.execute("UPDATE accountInformation SET accountBalance = '" + (transferAmountDouble+receivingBalance) +"', lastUpdate = '" + todayDate +"' WHERE username = '"+ loginName+"' AND accountType = '"+ receivingAccountType+ "';");
         statement.execute("UPDATE accountInformation SET accountBalance = '" + (transferringBalance-transferAmountDouble)+"', lastUpdate = '" + todayDate +"' WHERE username = '"+ loginName+"' AND accountType = '"+ transferringAccountType+ "';");
         statement.execute("INSERT INTO transactionHistory values ('"+loginName+"', '"+ receivingAccountType+"', "+ transferAmountDouble +", '"+todayDate+"');");
@@ -162,7 +170,8 @@ public class SessionManager {
     
     public void updateBalance(String loginName, String accountType, double amountToAdd) throws SQLException{
     	 Date date= new Date();
-         String todayDate = date.getYear()+1900+"-"+Integer.toString(date.getMonth()+1)+"-"+date.getDate();
+         @SuppressWarnings("deprecation")
+		String todayDate = date.getYear()+1900+"-"+Integer.toString(date.getMonth()+1)+"-"+date.getDate();
          
     	statement = connection.createStatement();
         statement.execute(

@@ -1,10 +1,12 @@
 
 /* 
- * Date: 30 April 2017
- * Author: Ken Machen (Group Three)
- * CMSC-495 Checking and Savings Program
+ * Date: 		5 May 2017
+ * Authors: 	Matthew Nielsen, Conor Maginnis, Lennon Brixey, Ken Machen
+ * CMSC-495 	Checking and Savings Program
+ * Purpose:   	interface to prompt user input of name and password to access 
+ * 				accounts through the session manager
  * 
- * 						Revision History
+ * 					Revision History
  * 
  * REVISION #	DATE			DESCRIPTION						NAME
  * 1			18 April 2017	Initial coding				   	Ken
@@ -33,7 +35,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.sql.SQLException;
 import java.awt.Dimension;
 import java.util.Arrays;
 

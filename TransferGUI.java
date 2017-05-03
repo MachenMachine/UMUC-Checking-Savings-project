@@ -1,8 +1,9 @@
 
 /* 
- * Date: 30 April 2017
- * Author: Ken Mahcne (Group 3)
- * CMSC-495 Checking and Savings Program
+ * Date: 		5 May 2017
+ * Authors:    	Matthew Nielsen, Conor Maginnis, Lennon Brixey, Ken Machen
+ * CMSC-495 	Checking and Savings Program
+ * Purpose:    	To provide the ability to transfer money between accounts.	
  * 
  * 						Revision History
  * 
@@ -120,7 +121,7 @@ public class TransferGUI extends JFrame implements PropertyChangeListener{
     validate();//ensure all buttons are visible
     
     //apply ActionListeners to the buttons
-    transferButton.addActionListener (e-> {jTextArea.setText("");
+    transferButton.addActionListener (e-> {jTextArea.setText("");//contains logic for error checking
     	String stringAmount = String.valueOf(amount);
     	if((checkingRadio.isSelected() && checkingRadio2.isSelected()) || (savingsRadio.isSelected() && savingsRadio2.isSelected())){
     		JOptionPane.showMessageDialog(null, "Please Select Different To and From Accounts.");
