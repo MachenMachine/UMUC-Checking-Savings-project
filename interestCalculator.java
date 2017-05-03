@@ -25,7 +25,7 @@ public class interestCalculator {
         int thisDay = generateDate.getDate();
         
 	
-	interestCalculator(String username){
+	interestCalculator(String username) throws SQLException{
 
 		/*  this constructor will need to create the accounts and transaction logs to be sent to the calculate method
             each account will then be sent to the calculate method and those results can be sent back to whatever called this
@@ -66,8 +66,7 @@ public class interestCalculator {
 				 date = rs.getString("transactionDate");
 				 date = removeChars(date);
 				 todayDate = generateDate.getYear()+1900+""+zero+Integer.toString(generateDate.getMonth()+1)+""+generateDate.getDate();
-				 int transactionDateInt = Integer.parseInt(date);
-                                 
+				 int transactionDateInt = Integer.parseInt(date);                                 
                             
                                  
 				 int todayDateInt = Integer.parseInt(todayDate);
@@ -79,8 +78,6 @@ public class interestCalculator {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-                
-                
                 
                 
                 		try {
@@ -114,10 +111,7 @@ public class interestCalculator {
 				 todayDate = generateDate.getYear()+1900+""+zero+Integer.toString(generateDate.getMonth()+1)+""+generateDate.getDate();
 				 int transactionDateInt = Integer.parseInt(date);
                                  
-                                
-                                 
 				 int todayDateInt = Integer.parseInt(todayDate);
-                                 
                               
 				 Transaction t = new Transaction(todayDateInt - transactionDateInt, rs.getDouble("balanceChange")); 
 				 checkingHistory.add(t);
@@ -125,9 +119,6 @@ public class interestCalculator {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-                        
-               
-
          
                // following if statements check to see what month it is and assign appropriate amount of days for that month 
                     
@@ -148,7 +139,12 @@ public class interestCalculator {
                 
             if (thisDay == daysinMonth){
                 
-                // This is where the calculate interest method will be called to add a transaction to database
+                double[] interest = new double[2];
+                
+                interest = this.calculateInterest(daysinMonth);
+                
+                sm.updateBalance(username, "saving", interest[0]);
+                sm.updateBalance(username, "checking", interest[1]);
                 
             }
         }
@@ -166,14 +162,19 @@ public class interestCalculator {
 		
 	}
         
-        
-        
 
 	double[] calculateInterest(int daysinMonth){        
 
 		double[] interest = new double[2];
 		double savingavgdlybal = 0, checkingavgdlybal = 0;
 		double savingSum = 0, checkingSum = 0;  
+                double svgBal = 0;
+                double chkBal = 0;
+                
+                svgBal = svgBal;
+                
+             
+                chkBal = checkingBalance;
                 
 		for (int i = 0; i < daysinMonth; i++){                       //starts with most recent transactions and loops down to 30 day old transactions
            
@@ -183,20 +184,17 @@ public class interestCalculator {
 				if (x.age == i){                            //checks for transactions that happened on current "day"
 					
                                              
-						savingBalance = savingBalance - x.amount;
-						savingBalance = Math.round(savingBalance*100.0)/100.0;
+						svgBal = svgBal - x.amount;
+						svgBal = Math.round(svgBal*100.0)/100.0;
                                                 
 				} 
                                
 			}
-			savingSum = savingSum + savingBalance;
+			savingSum = savingSum + svgBal;
 		}
 
 		savingavgdlybal = savingSum / daysinMonth;                           //total is then divided by 30 to get avg daily balance
                 savingavgdlybal = Math.round(savingavgdlybal*100.0)/100.0;
-                
-                
-                System.out.println(savingavgdlybal);
                 
 		interest[0] = (savingavgdlybal * savingRate)/12;               
 		interest[0] = Math.round(interest[0]*100.0)/100.0;    //rounds off the final amount
@@ -209,26 +207,22 @@ public class interestCalculator {
 				if (y.age == i){                            //checks for transactions that happened on current "day"
 					
                                            
-						checkingBalance = checkingBalance - y.amount;
-						checkingBalance = Math.round(checkingBalance*100.0)/100.0;
+						chkBal = chkBal - y.amount;
+						chkBal = Math.round(chkBal*100.0)/100.0;
                                                 
 				} 
                                
 			}
-			checkingSum = checkingSum + checkingBalance;
+			checkingSum = checkingSum + chkBal;
 		}
 
 		checkingavgdlybal = checkingSum / daysinMonth;                           //total is then divided by 30 to get avg daily balance
                 checkingavgdlybal = Math.round(checkingavgdlybal*100.0)/100.0;
+                 System.out.println(checkingSum);
                 
-                
-                System.out.println(checkingavgdlybal);
                 
 		interest[1] = (checkingavgdlybal * checkingRate)/12;               
 		interest[1] = Math.round(interest[1]*100.0)/100.0;    //rounds off the final amount
-                
-                
-                
                 
                
 		return interest;                                //returns result
@@ -240,6 +234,8 @@ public class interestCalculator {
         int day = generateDate.getDate();
         double[] interest = new double[2];
         interest[0] = 0; interest[1] = 0;
+        
+       
         
         interest = this.calculateInterest(day);           
             

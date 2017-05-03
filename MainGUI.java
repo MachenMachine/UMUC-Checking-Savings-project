@@ -1,7 +1,10 @@
 /* 
- * Date: 30 April 2017
- * Author: Ken Mahcne (Group 3)
- * CMSC-495 Checking and Savings Program
+ *
+ * Date: 		5 May 2017
+ * Authors: 	Matthew Nielsen, Conor Maginnis, Lennon Brixey, Ken Machen
+ * CMSC-495 	Checking and Savings Program
+ * Purpose:   	To provide the User interface with the session manager and other
+ * 				GUIs and program classes	
  * 
  * 						Revision History
  * 
@@ -13,6 +16,7 @@
  * 5			26 April 2017   Code clead up							Ken
  * 6			28 April 2017	Changed call to interest Calculator		Ken
  * 7			28 April 2017	Fixed interest call to match changes	Lennon
+ * 8			3  May	 2017	Cleaned up warnings						Ken
  * 
 */
 
@@ -21,6 +25,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
@@ -28,6 +33,8 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.sql.SQLException;
 
 public class MainGUI extends JFrame{
@@ -43,18 +50,21 @@ public class MainGUI extends JFrame{
   //Constructor with GUI & title input
   public MainGUI (String title, String loginName, String loginPassword) throws NumberFormatException, SQLException {
     setTitle (title + "'s Accounts");
+    Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("piggy.png"));
+   	ImageIcon icon = new ImageIcon(image);
+   	setIconImage(icon.getImage());
     setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
     setLocationRelativeTo(null);
-    setSize (600, 400);
+    setSize (400, 400);
     setVisible (true);
 
     // put scroll bars around the text area
     JScrollPane scrollPane = new JScrollPane (jTextArea);
     add (scrollPane, BorderLayout.CENTER); 
     jTextArea.setCaretPosition(jTextArea.getDocument().getLength());
-	setBackground(Color.lightGray);
-	JPanel inputOutputPanel = new JPanel();
-	inputOutputPanel.setLayout(new GridLayout(6,0,0,5));
+	  setBackground(Color.lightGray);
+	  JPanel inputOutputPanel = new JPanel();
+	  inputOutputPanel.setLayout(new GridLayout(6,0,0,5));
     
     // buttons on the top
     JPanel panel = new JPanel (); // FlowLayout
@@ -75,9 +85,9 @@ public class MainGUI extends JFrame{
     
     SessionManager mySession = new SessionManager();
     InterestCalculator myInterest = new InterestCalculator(loginName);
-    //apply ActionListeners to the buttons
+     //apply ActionListeners to the buttons
     balanceButton.addActionListener(e-> {jTextArea.setText("");
-    		
+
     	try {
 			jTextArea.append("Checking Balance: " + mySession.getBalance(loginName, "checking"));
 		} catch (Exception e1) {
@@ -90,7 +100,9 @@ public class MainGUI extends JFrame{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-    });
+
+    });//end balanceButton action listener
+
     transferButton.addActionListener (e-> {jTextArea.setText("");
     	jTextArea.append("transfer Button Pressed");
     	try {
@@ -122,12 +134,26 @@ public class MainGUI extends JFrame{
     	jTextArea.append(myInterest.toString());
     	
     });//end interestButton listener
-    logoutButton.addActionListener(e-> {jTextArea.setText("");//end displyButton listener 
+    
+    logoutButton.addActionListener(e-> {jTextArea.setText("");//end displyButton listener+
+    
 	    int dialogButton =JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?",null, JOptionPane.YES_NO_OPTION);
 		if(dialogButton == JOptionPane.YES_OPTION){
-			this.setVisible(false);
-	    	JFrame frame = new JFrame();
-	    	new LoginGUI(frame, "Banking App");
+			try {
+				TransferGUI myTransfer = new TransferGUI("FUNDS TRANSFER", loginName);
+				myTransfer.close();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			int logButton =JOptionPane.showConfirmDialog(null, "You are now logged out. \nWould you like to log in?",null, JOptionPane.YES_NO_OPTION);
+				if(logButton == JOptionPane.YES_OPTION){
+					JFrame frame = new JFrame();
+			    	new LoginGUI(frame, "Banking App");
+				}else{
+					System.exit(0);
+				}
+
 		}
 		if(dialogButton == JOptionPane.NO_OPTION){
 			return;
@@ -135,6 +161,6 @@ public class MainGUI extends JFrame{
     });//end logoutButton listener
    
   } // end constructor
- 
 
-}//end Class MenuGUI
+}//end Class MainGUI
+
